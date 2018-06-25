@@ -7,24 +7,26 @@ ARG suitedir=.
 # set working dir to /dockercylc
 WORKDIR /dockercylc
 
-# packages needed
-RUN add-pkg xterm curl \
-	python py-pip py-openssl py-requests py-gtk py-graphviz openssl make bash ; \
-	pip install -r WebBasedCylc/requirements.txt ; \
-	rm -rf /var/cache/apk/*
-
-# x gui
-COPY startapp.sh /startapp.sh
-RUN dos2unix /startapp.sh
+# directorys
+RUN mkdir -p $suite /opt ./cylc-run/$suite WebBasedCylc/
 
 # cylc
-RUN mkdir -p $suite /opt ./cylc-run/$suite
 ADD $suitedir ./$suite
 ADD $suitedir/suite.rc ./cylc-run/$suite
 
 # web based cylc
-RUN mkdir WebBasedCylc/
-ADD ./WebBasedCylc/ ./WebBasedCylc
+#ADD ./WebBasedCylc/ ./WebBasedCylc
+
+# packages needed
+RUN add-pkg xterm curl \
+	python py-pip py-openssl py-requests py-gtk py-graphviz openssl make bash ; \
+	pip install -r ./WebBasedCylc/requirements.txt
+
+# x gui
+RUN \
+	printf "#!/bin/sh\n" > /startapp.sh ; \ 
+	printf "export HOME=/dockercylc\n" >> /startapp.sh ; \
+	printf "exec cylc gui helloworld\n" >> /startapp.sh
 
 # install cylc and ready suite
 RUN cd /opt && curl -# -L https://github.com/cylc/cylc/archive/7.7.0.tar.gz | tar -xz ; \
