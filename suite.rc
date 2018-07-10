@@ -1,0 +1,102 @@
+[meta]
+    title = "Two cycling tasks, no inter-cycle dependence"
+[cylc]
+    UTC mode = True
+	[[parameters]]
+		navgem_sub = 10m_winds, mslp, relvor, sol_rad, wind_waves
+[scheduling]
+    initial cycle point = 20180704T00
+    [[special tasks]]
+        clock-trigger = dummy_start(PT6H)
+		clock-expire = dummy_start(PT18H)
+    [[dependencies]]
+		[[[PT1H]]]
+			graph = """
+				download_ir[-PT1H] | dummy_start[-PT1H]:expired => dummy_start
+				dummy_start => download_ir
+				dummy_start:expired => !download_ir
+			"""
+        [[[T00,T12]]] # 00 and 12 hours UTC every day
+            graph = """
+				dummy_end[-PT12H] | dummy_start[-PT12H]:expired => dummy_start
+				dummy_start => download<navgem_sub>
+				download<navgem_sub>         => move_old<navgem_sub>
+				move_old<navgem_sub>         => move_new<navgem_sub> 
+				move_new<navgem_sub>:failed  => recover_old<navgem_sub>
+				move_new<navgem_sub> | recover_old<navgem_sub> => clean<navgem_sub>
+				dummy_start:expired | CLEAN_NAVGEM:succeed-all => !replace_model
+			"""
+[runtime]
+	[[download_ir]]
+        script = """
+            python /dockercylc/webscrape/scrape.py -p $processors \
+			--check_path $DESTINATION \
+			--output_path $NEW_DIR \
+			$url
+		"""
+		post-script = """
+			mv $NEW_DIR/*.jpg $DESTINATION || true
+		"""
+		[[[environment]]]
+			url  = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/ir/
+			processors = 4
+			NEW_DIR = /dockercylc/webscrape/ir/.new
+			DESTINATION = /dockercylc/webscrape/ir
+		[[[job]]]
+			execution retry delays = PT1S, PT30S, PT5M, PT30M, PT3H
+	[[replace_model]]
+		[[[environment]]]
+			NEW_DIR = /dockercylc/webscrape/$CYLC_TASK_PARAM_navgem_sub/.new
+			OLD_DIR = /dockercylc/webscrape/$CYLC_TASK_PARAM_navgem_sub/.old
+			DESTINATION = /dockercylc/webscrape/$CYLC_TASK_PARAM_navgem_sub
+	[[DOWNLOAD_NAVGEM]]
+    [[download<navgem_sub>]]
+		inherit = DOWNLOAD_NAVGEM, replace_model
+        script = """
+            python /dockercylc/webscrape/scrape.py -p $processors \
+			--check_path $DESTINATION \
+			--output_path $NEW_DIR \
+			$url/$CYLC_TASK_PARAM_navgem_sub/latest/
+		"""
+		[[[environment]]]
+			url  = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/navgem
+			processors = 4
+		[[[job]]]
+			execution retry delays = PT1S, PT30S, PT5M, PT10M
+	[[MOVE_OLD_NAVGEM]]
+	[[move_old<navgem_sub>]]
+		inherit = MOVE_OLD_NAVGEM, replace_model
+        script = """
+			mkdir -p $OLD_DIR ; \
+			mv $DESTINATION/*.jpg $OLD_DIR || true
+		"""
+	[[MOVE_NEW_NAVGEM]]
+	[[move_new<navgem_sub>]]
+		inherit = MOVE_NEW_NAVGEM, replace_model
+        script = """
+			mv $NEW_DIR/*.jpg $DESTINATION
+		"""
+	[[RECOVER_OLD_NAVGEM]]
+	[[recover_old<navgem_sub>]]
+		inherit = RECOVER_OLD_NAVGEM, replace_model
+        script = """
+			mv  $OLD_DIR/*.jpg $DESTINATION
+		"""
+	[[CLEAN_NAVGEM]]
+	[[clean<navgem_sub>]]
+		inherit = CLEAN_NAVGEM, replace_model
+        script = """
+			if [[-d $OLD_DIR ]]; then  \
+				rm $OLD_DIR/*.jpg ; \
+				rmdir $OLD_DIR ; \
+			fi
+			if [[-d $NEW_DIR ]]; then  \
+				rm $NEW_DIR/*.jpg ; \
+				rmdir $NEW_DIR ; \
+			fi
+		"""
+	[[DUMMY_SUCCESS]]
+	[[dummy_success<navgem_sub>]]
+		inherit = DUMMY_SUCCESS, replace_model
+	[[dummy_success_ir]]
+		inherit = DUMMY_SUCCESS
