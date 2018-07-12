@@ -57,7 +57,7 @@
 			$url/$CYLC_TASK_PARAM_navgem_sub/latest/ 
 		"""
 		[[[environment]]]
-			url  = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/navgem
+			url = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/navgem
 			processors = 4
 		[[[job]]]
 			execution retry delays = PT1S, PT30S, PT5M, PT10M
@@ -93,12 +93,12 @@
 	[[clean<navgem_sub>]]
 		inherit = CLEAN_NAVGEM, replace_model
         script = """
-			if [[-d $OLD_DIR ]]; then  \
-				rm $OLD_DIR/*.jpg ; \
+			if [[ -d $OLD_DIR ]]; then  \
+				rm $OLD_DIR/*.jpg || true ; \
 				rmdir $OLD_DIR ; \
 			fi
-			if [[-d $NEW_DIR ]]; then  \
-				rm $NEW_DIR/*.jpg ; \
+			if [[ -d $NEW_DIR ]]; then  \
+				rm $NEW_DIR/*.jpg || true; \
 				rmdir $NEW_DIR ; \
 			fi
 		"""

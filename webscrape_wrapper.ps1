@@ -1,1 +1,15 @@
-docker run -it -v C:\RT_Contents\RT_NRL_Wind_Waves:/dockercylc/webscrape/wind_waves -v C:\RT_Contents\RT_NRL_mslp:/dockercylc/webscrape/mslp -v C:\RT_Contents\RT_NRL_10m_winds:/dockercylc/webscrape/10m_winds -v C:\RT_Contents\RT_WaterVapor:/dockercylc/webscrape/wv -v C:\RT_Contents\RT_Aerosols:/dockercylc/webscrape/aerosols -v C:\RT_Contents\NRL_Clouds_BlueMarble:/dockercylc/webscrape/ir_bluemarble -v C:\Users\whitcomb\Documents\cylctest\webscrape:/dockercylc/webscrape -e "suitename=webscrape" -p 5800:5800 cylc
+$LOCAL_WW = "C:\RT_Contents\RT_NRL_Wind_Waves"
+$DOCKER_WW = "/dockercylc/webscrape/wind_waves"
+$LOCAL_MSLP = "C:\RT_Contents\RT_NRL_mslp"
+$DOCKER_MSLP = "/dockercylc/webscrape/mslp"
+$LOCAL_10M = "C:\RT_Contents\RT_NRL_10m_winds"
+$DOCKER_10M = "/dockercylc/webscrape/10m_winds"
+$LOCAL_WV = "C:\RT_Contents\RT_WaterVapor"
+$DOCKER_WV = "/dockercylc/webscrape/wv"
+$LOCAL_AEROSOLS = "C:\RT_Contents\RT_Aerosols"
+$DOCKER_AEROSOLS = "/dockercylc/webscrape/aerosols"
+$LOCAL_IRBM = "C:\RT_Contents\NRL_Clouds_BlueMarble"
+$DOCKER_IRBM = "/dockercylc/webscrape/ir_bluemarble"
+$LOCAL_SUITE = "C:\Users\whitcomb\Documents\cylctest\webscrape"
+$DOCKER_SUITE = "/dockercylc/webscrape"
+docker run -it -v ${LOCAL_WW}:${DOCKER_WW} -v ${LOCAL_MSLP}:${DOCKER_MSLP} -v ${LOCAL_10M}:${DOCKER_10M} -v ${LOCAL_WV}:${DOCKER_WV} -v ${LOCAL_AEROSOLS}:${DOCKER_AEROSOLS} -v ${LOCAL_IRBM}:${DOCKER_IRBM} -v ${LOCAL_SUITE}:${DOCKER_SUITE} -e "suitename=webscrape" -p 5800:5800 cylc
