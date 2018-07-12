@@ -7,13 +7,14 @@
 		navgem_sub = 10m_winds, mslp, relvor, sol_rad, wind_waves
 [scheduling]
     initial cycle point = 20180709T00
+	max active cycle points = 10
     [[special tasks]]
-		clock-expire = update<mos_sub>(PT7H), download<navgem_sub>(PT17H)
+		clock-expire = update<mos_sub>(PT6H30M), download<navgem_sub>(PT17H)
         clock-trigger = update<mos_sub>(PT6H), download<navgem_sub>(PT6H)
     [[dependencies]]
 		[[[PT1H]]]
 			graph = """
-				update<mos_sub>
+				update<mos_sub>[-PT1H] | update<mos_sub>[-PT1H]:expired => update<mos_sub>
 			"""
         [[[T00,T12]]] # 00 and 12 hours UTC every day
             graph = """
@@ -22,7 +23,7 @@
 				rename_new<navgem_sub>       => move_new<navgem_sub>
 				rename_new<navgem_sub>:failed | move_new<navgem_sub>:failed  => recover_old<navgem_sub>
 				move_new<navgem_sub>:succeed | recover_old<navgem_sub>:succeed | download<navgem_sub>:expired => clean<navgem_sub>
-				CLEAN_NAVGEM:succeed-all => !replace_model
+				CLEAN_NAVGEM:succeed-all => !MOVE_OLD_NAVGEM & !RENAME_NEW_NAVGEM & !MOVE_NEW_NAVGEM & !RECOVER_OLD_NAVGEM
 			"""
 [runtime]
 	[[update_model]]
@@ -60,7 +61,7 @@
 			url = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/navgem
 			processors = 4
 		[[[job]]]
-			execution retry delays = PT1S, PT30S, PT5M, PT10M
+			execution retry delays = 12*PT30M
 	[[MOVE_OLD_NAVGEM]]
 	[[move_old<navgem_sub>]]
 		inherit = MOVE_OLD_NAVGEM, replace_model
