@@ -3,31 +3,36 @@
 [cylc]
     UTC mode = True
 	[[parameters]]
+		mos_sub = aerosols, ir, ir_bluemarble
 		navgem_sub = 10m_winds, mslp, relvor, sol_rad, wind_waves
 [scheduling]
-    initial cycle point = 20180704T00
+    initial cycle point = 20180709T00
     [[special tasks]]
-        clock-trigger = dummy_start(PT6H)
-		clock-expire = dummy_start(PT18H)
+		clock-expire = update<mos_sub>(PT7H), download<navgem_sub>(PT17H)
+        clock-trigger = update<mos_sub>(PT6H), download<navgem_sub>(PT6H)
     [[dependencies]]
 		[[[PT1H]]]
 			graph = """
-				download_ir[-PT1H] | dummy_start[-PT1H]:expired => dummy_start
-				dummy_start => download_ir
-				dummy_start:expired => !download_ir
+				update<mos_sub>
 			"""
         [[[T00,T12]]] # 00 and 12 hours UTC every day
             graph = """
-				dummy_end[-PT12H] | dummy_start[-PT12H]:expired => dummy_start
-				dummy_start => download<navgem_sub>
 				download<navgem_sub>         => move_old<navgem_sub>
-				move_old<navgem_sub>         => move_new<navgem_sub> 
-				move_new<navgem_sub>:failed  => recover_old<navgem_sub>
-				move_new<navgem_sub> | recover_old<navgem_sub> => clean<navgem_sub>
-				dummy_start:expired | CLEAN_NAVGEM:succeed-all => !replace_model
+				move_old<navgem_sub>         => rename_new<navgem_sub>
+				rename_new<navgem_sub>       => move_new<navgem_sub>
+				rename_new<navgem_sub>:failed | move_new<navgem_sub>:failed  => recover_old<navgem_sub>
+				move_new<navgem_sub>:succeed | recover_old<navgem_sub>:succeed | download<navgem_sub>:expired => clean<navgem_sub>
+				CLEAN_NAVGEM:succeed-all => !replace_model
 			"""
 [runtime]
-	[[download_ir]]
+	[[update_model]]
+		[[[environment]]]
+			processors = 4
+			url = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/$CYLC_TASK_PARAM_mos_sub
+			NEW_DIR = /dockercylc/webscrape/$CYLC_TASK_PARAM_mos_sub/.new
+			DESTINATION = /dockercylc/webscrape/$CYLC_TASK_PARAM_mos_sub
+	[[update<mos_sub>]]
+		inherit = update_model
         script = """
             python /dockercylc/webscrape/scrape.py -p $processors \
 			--check_path $DESTINATION \
@@ -37,13 +42,6 @@
 		post-script = """
 			mv $NEW_DIR/*.jpg $DESTINATION || true
 		"""
-		[[[environment]]]
-			url  = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/ir/
-			processors = 4
-			NEW_DIR = /dockercylc/webscrape/ir/.new
-			DESTINATION = /dockercylc/webscrape/ir
-		[[[job]]]
-			execution retry delays = PT1S, PT30S, PT5M, PT30M, PT3H
 	[[replace_model]]
 		[[[environment]]]
 			NEW_DIR = /dockercylc/webscrape/$CYLC_TASK_PARAM_navgem_sub/.new
@@ -54,9 +52,9 @@
 		inherit = DOWNLOAD_NAVGEM, replace_model
         script = """
             python /dockercylc/webscrape/scrape.py -p $processors \
-			--check_path $DESTINATION \
+			--replace \
 			--output_path $NEW_DIR \
-			$url/$CYLC_TASK_PARAM_navgem_sub/latest/
+			$url/$CYLC_TASK_PARAM_navgem_sub/latest/ 
 		"""
 		[[[environment]]]
 			url  = https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/navgem
@@ -69,6 +67,15 @@
         script = """
 			mkdir -p $OLD_DIR ; \
 			mv $DESTINATION/*.jpg $OLD_DIR || true
+		"""
+	[[RENAME_NEW_NAVGEM]]
+	[[rename_new<navgem_sub>]]
+		inherit = RENAME_NEW_NAVGEM, replace_model
+        script = """
+			cd $NEW_DIR
+			for file in *_*.jpg; do \
+				mv "$file" "${file%%_*}_${file##*_}" ; \
+			done
 		"""
 	[[MOVE_NEW_NAVGEM]]
 	[[move_new<navgem_sub>]]
@@ -95,8 +102,3 @@
 				rmdir $NEW_DIR ; \
 			fi
 		"""
-	[[DUMMY_SUCCESS]]
-	[[dummy_success<navgem_sub>]]
-		inherit = DUMMY_SUCCESS, replace_model
-	[[dummy_success_ir]]
-		inherit = DUMMY_SUCCESS
