@@ -9,12 +9,12 @@
     initial cycle point = 20180709T00
 	max active cycle points = 10
     [[special tasks]]
-		clock-expire = update<mos_sub>(PT6H50M), download<navgem_sub>(PT19H)
-        clock-trigger = update<mos_sub>(PT6H10M), download<navgem_sub>(PT8H) # These offsets are meant to match the website updates plus epsilon
+		clock-expire = update<mos_sub>(PT9H), download<navgem_sub>(PT19H)
+        clock-trigger = update<mos_sub>(PT8H10M), download<navgem_sub>(PT8H) # These offsets are meant to match the website updates plus epsilon
     [[dependencies]]
 		[[[PT1H]]]
 			graph = """
-				update<mos_sub>[-PT1H] | update<mos_sub>[-PT1H]:expired => update<mos_sub>
+				update<mos_sub>[-PT1H]:finish | update<mos_sub>[-PT1H]:expired => update<mos_sub>
 			"""
         [[[T00,T12]]]
             graph = """
