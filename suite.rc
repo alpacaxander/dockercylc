@@ -18,14 +18,14 @@
 			"""
         [[[T00,T12]]]
             graph = """
-				finished<navgem_sub>[-PT12H]  | download<navgem_sub>[-PT12H]:expired => download<navgem_sub>
+				finished<navgem_sub>[-PT12H] => download<navgem_sub>
 				download<navgem_sub>         => move_old<navgem_sub>
 				move_old<navgem_sub>         => rename_new<navgem_sub>
 				rename_new<navgem_sub>       => move_new<navgem_sub>
 
 				rename_new<navgem_sub>:failed | move_new<navgem_sub>:failed     => recover_old<navgem_sub>
 				move_new<navgem_sub>:succeed  | recover_old<navgem_sub>:succeed => clean<navgem_sub>
-				download<navgem_sub>:expired  | download<navgem_sub>:failed | clean<navgem_sub>               => finished<navgem_sub>
+				download<navgem_sub>:expired  | download<navgem_sub>:failed | clean<navgem_sub> => finished<navgem_sub>
 
 				download<navgem_sub>:expired | download<navgem_sub>:failed => !move_old<navgem_sub>
 				download<navgem_sub>:expired | download<navgem_sub>:failed => !rename_new<navgem_sub>
