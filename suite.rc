@@ -25,13 +25,13 @@
 
 				rename_new<navgem_sub>:failed | move_new<navgem_sub>:failed     => recover_old<navgem_sub>
 				move_new<navgem_sub>:succeed  | recover_old<navgem_sub>:succeed => clean<navgem_sub>
-				download<navgem_sub>:expired  | clean<navgem_sub>               => finished<navgem_sub>
+				download<navgem_sub>:expired  | download<navgem_sub>:failed | clean<navgem_sub>               => finished<navgem_sub>
 
-				download<navgem_sub>:expired => !move_old<navgem_sub>
-				download<navgem_sub>:expired => !rename_new<navgem_sub>
-				download<navgem_sub>:expired | rename_new<navgem_sub>:failed => !move_new<navgem_sub>
-				download<navgem_sub>:expired | move_new<navgem_sub> => !recover_old<navgem_sub>
-				download<navgem_sub>:expired => !clean<navgem_sub>
+				download<navgem_sub>:expired | download<navgem_sub>:failed => !move_old<navgem_sub>
+				download<navgem_sub>:expired | download<navgem_sub>:failed => !rename_new<navgem_sub>
+				download<navgem_sub>:expired | download<navgem_sub>:failed | rename_new<navgem_sub>:failed => !move_new<navgem_sub>
+				download<navgem_sub>:expired | download<navgem_sub>:failed | move_new<navgem_sub> => !recover_old<navgem_sub>
+				download<navgem_sub>:expired | download<navgem_sub>:failed => !clean<navgem_sub>
 			"""
 [runtime]
 	[[update_model]]
