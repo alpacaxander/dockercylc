@@ -16,6 +16,6 @@ $LOCAL_IRBM = "C:\RT_Contents\NRL_Clouds_BlueMarble"
 $DOCKER_IRBM = "/dockercylc/webscrape/ir_bluemarble"
 $LOCAL_IR = "C:\RT_Contents\NRL_IR"
 $DOCKER_IR = "/dockercylc/webscrape/ir"
-$LOCAL_SUITE = "C:\Users\whitcomb\Documents\cylctest\webscrape"
+$LOCAL_SUITE = "C:\cylc\webscrape"
 $DOCKER_SUITE = "/dockercylc/webscrape"
 docker run -it -v ${LOCAL_RELVOR}:${DOCKER_RELVOR} -v ${LOCAL_SOL_RAD}:${DOCKER_SOL_RAD} -v ${LOCAL_IR}:${DOCKER_IR} -v ${LOCAL_WW}:${DOCKER_WW} -v ${LOCAL_MSLP}:${DOCKER_MSLP} -v ${LOCAL_10M}:${DOCKER_10M} -v ${LOCAL_WV}:${DOCKER_WV} -v ${LOCAL_AEROSOLS}:${DOCKER_AEROSOLS} -v ${LOCAL_IRBM}:${DOCKER_IRBM} -v ${LOCAL_SUITE}:${DOCKER_SUITE} -e "suitename=webscrape" -e "coldstart=1" -p 5800:5800 cylc
