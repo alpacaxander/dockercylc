@@ -8,12 +8,12 @@
 | startpoint| Startpoint if warmstarting suite |
 | restart   | If set to 1 will restart suite on runtime. This requires a volume mount to /dockercylc/cylc-run/ |
 
-##Prerequisites
+## Prerequisites
 
 Enable shared drives in docker settings.
 
 
-##Basic start
+## Basic start
 
 docker build -t cylc PathToDockerfile
 
@@ -22,7 +22,7 @@ docker run -it -v ABSOLUTE_PATH_TO_SUITE_FOLDER:/dockercylc/suitename -p 5800:58
 Go to localhost:5800 on any web browser. You'll see a cylc gui. Run the suite.
 
 
-##Notes
+## Notes
 
 A different volume can be in your suite definition volume: -v PATH_TO_SUITE_DEF:/dockercylc/suitename/ -v PATH_TO_SOMEWHERE_ELSE:/dockercylc/suitename/data/
 
