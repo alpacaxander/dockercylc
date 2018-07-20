@@ -1,11 +1,18 @@
 # dockercylc
-Environment variables:
 
--| suitename | On runtime the container will register /dockercylc/${suitename} and run cylc gui for it |
--| coldstart | If set to 1 will coldstart suite on runtime |
--| warmstart | If set to 1 will warmstart suite on runtime |
--| startpoint| Startpoint if warmstarting suite |
--| restart   | If set to 1 will restart suite on runtime. This requires a volume mount to /dockercylc/cylc-run/ |
+| Environment variable | Description |
+
+| -------------------- | -----------------------------------------------------------------------------|
+
+| suitename | On runtime the container will register /dockercylc/${suitename} and run cylc gui for it |
+  
+| coldstart | If set to 1 will coldstart suite on runtime |
+  
+| warmstart | If set to 1 will warmstart suite on runtime |
+  
+| startpoint| Startpoint if warmstarting suite |
+  
+| restart   | If set to 1 will restart suite on runtime. This requires a volume mount to /dockercylc/cylc-run/ |
 
 Prerequisites:
 Enable shared drives in docker settings.
