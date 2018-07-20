@@ -17,7 +17,9 @@ Enable shared drives in docker settings.
 
 docker build -t cylc PathToDockerfile
 
-docker run -it -v ABSOLUTE_PATH_TO_SUITE_FOLDER:/dockercylc/suitename -p 5800:5800 cylc
+docker run -it -v PATH:/dockercylc/suitename -p 5800:5800 cylc
+
+Where PATH is the absolute path to the folder containing a suite.rc file
 
 Go to localhost:5800 on any web browser. You'll see a cylc gui. Run the suite.
 
