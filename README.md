@@ -13,7 +13,7 @@
 Enable shared drives in docker settings.
 
 
-## Basic start
+## Quick start
 
 docker build -t cylc PathToDockerfile
 
