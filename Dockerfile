@@ -1,6 +1,6 @@
 FROM jlesage/baseimage-gui:alpine-3.7-glibc
 
-ENV suitename=helloworld
+ENV suitename="suitename"
 ENV APP_NAME="dockercylc"
 ENV coldstart=0
 ENV warmstart=0
@@ -37,8 +37,3 @@ RUN \
 	printf "fi\n" >> /startapp.sh ; \
 #	printf "exec xterm\n" >> /startapp.sh ; \
 	printf "exec cylc gui \$suitename\n" >> /startapp.sh
-
-# make port 8000 available to the world outside container
-EXPOSE 8000
-
-#env temp="https://www.nrlmry.navy.mil/archdat/global/stitched/MoS_2/navgem/"
