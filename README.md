@@ -1,5 +1,9 @@
 # dockercylc
 
+This image is a fast and easy way to run cylc suites on windows.
+
+## Environment Variables
+
 | Environment variable | Description |
 | -------------------- | -----------------------------------------------------------------------------|
 | suitename | On runtime the container will register /dockercylc/${suitename} and run cylc gui for it |
@@ -13,7 +17,7 @@
 Enable shared drives in docker settings.
 
 
-## Quick start
+## Quick Vtart
 
 docker build -t cylc PathToDockerfile
 
@@ -31,3 +35,9 @@ A different volume can be in your suite definition volume: -v PATH_TO_SUITE_DEF:
 This may create empty folders in PATH_TO_SUITE_DEF
 
 Setting a volume to cylc-run is dangerous; if the container is shut down unexpectedly without first stopping the suite you cannot restart the suite.
+
+## Credit
+
+Credit to jlesage for making the suite gui easily visible.
+
+https://github.com/jlesage/docker-baseimage-gui
