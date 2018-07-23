@@ -17,7 +17,7 @@ This image is a fast and easy way to run cylc suites on windows.
 Enable shared drives in docker settings.
 
 
-## Quick Vtart
+## Quick Start
 
 docker build -t cylc PathToDockerfile
 
