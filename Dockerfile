@@ -1,4 +1,4 @@
-FROM jlesage/baseimage-gui:alpine-3.8-glibc
+FROM jlesage/baseimage-gui:alpine-3.7-glibc
 
 ENV suitename="suitename"
 ENV APP_NAME="dockercylc"
