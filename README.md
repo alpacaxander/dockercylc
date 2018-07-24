@@ -36,7 +36,9 @@ This may create empty folders in PATH_TO_SUITE_DEF
 
 Setting a volume to cylc-run is dangerous; if the container is shut down unexpectedly without first stopping the suite you cannot restart the suite.
 
-Because the container is linux, if your files were writen in dos you may need to run dos2unix.
+Because the container is linux, if your files were writen in dos you may need to run dos2unix.  
+
+The Alpine filesystem will put python in /usr/bin which may interfere with some shebang lines.
 
 ## Credit
 
