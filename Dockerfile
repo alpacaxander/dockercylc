@@ -14,10 +14,6 @@ RUN add-pkg xterm curl python py-pip py-openssl py-requests py-gtk py-graphviz o
 	cd /opt/cylc-7.7.0/ && make ; \
 	ln -s /opt/cylc-7.7.0/ /opt/cylc ; \
 	mkdir /dockercylc/cylc-run ; \
-	printf "[hosts]\n" > /opt/cylc-7.7.0/etc/global.rc ; \ 
-	printf "[[localhost]]\n" >> /opt/cylc-7.7.0/etc/global.rc ; \
-	printf "run directory = /dockercylc/cylc-run\n" >> /opt/cylc-7.7.0/etc/global.rc ; \
-	printf "work directory = /dockercylc/cylc-run" >> /opt/cylc-7.7.0/etc/global.rc ; \
 	chmod -R 777 /dockercylc/cylc-run
 
 RUN pip install BeautifulSoup more-itertools
@@ -25,9 +21,7 @@ RUN pip install BeautifulSoup more-itertools
 RUN \
 	printf "#!/bin/sh\n" > /startapp.sh ; \
 	printf "export HOME=/dockercylc/\n" >> /startapp.sh ; \
-#	printf "pip install -r /dockercylc/\$suitename/requirements.txt\n" >> /startapp.sh ; \
-	printf "mkdir -p /dockercylc/cylc-run/\$suitename\n" >> /startapp.sh ; \
-	printf "cp /dockercylc/\$suitename/suite.rc /dockercylc/cylc-run/\$suitename/\n" >> /startapp.sh ; \
+	printf "cylc register \$suitename /dockercylc/\$suitename/\n" >> /startapp.sh ; \
 	printf "if [ \$coldstart -eq 1 ]; then\n" >> /startapp.sh ; \
 	printf "    cylc run \$suitename\n" >> /startapp.sh ; \
 	printf "elif [ \$warmstart -eq 1 ]; then\n" >> /startapp.sh ; \
@@ -35,5 +29,4 @@ RUN \
 	printf "elif [ \$restart -eq 1 ]; then\n" >> /startapp.sh ; \
 	printf "    cylc restart \$suitename\n" >> /startapp.sh ; \
 	printf "fi\n" >> /startapp.sh ; \
-#	printf "exec xterm\n" >> /startapp.sh ; \
 	printf "exec cylc gui \$suitename\n" >> /startapp.sh
