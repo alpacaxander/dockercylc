@@ -16,8 +16,6 @@ RUN add-pkg xterm curl python py-pip py-openssl py-requests py-gtk py-graphviz o
 	mkdir /dockercylc/cylc-run ; \
 	chmod -R 777 /dockercylc/cylc-run
 
-RUN pip install BeautifulSoup more-itertools
-
 RUN \
 	printf "#!/bin/sh\n" > /startapp.sh ; \
 	printf "export HOME=/dockercylc/\n" >> /startapp.sh ; \
