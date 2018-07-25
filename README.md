@@ -5,7 +5,7 @@ This image is a fast and easy way to run cylc suites on windows.
 ## Environment Variables
 
 | Environment variable | Description |
-| -------------------- | -----------------------------------------------------------------------------|
+| ----------------------- | ----------------------------------------------------------------------------- |
 | suitename | On runtime the container will register /dockercylc/${suitename} and run cylc gui for it |
 | coldstart | If set to 1 will coldstart suite on runtime |
 | warmstart | If set to 1 will warmstart suite on runtime |
@@ -26,6 +26,17 @@ docker run -it -v PATH:/dockercylc/suitename -p 5800:5800 cylc
 Where PATH is the absolute path to the folder containing a suite.rc file
 
 Go to localhost:5800 on any web browser. You'll see a cylc gui. Run the suite.
+
+
+## Packages
+
+The simplest way to get specific packages for your suite is to make a new image, inherit alexanderpaulsell/cylc, then install packages.
+pip is already installed otherwise use alpines package manager.  
+
+###### Example
+
+FROM alexanderpaulsell/cylc  
+RUN pip install BeautifulSoup
 
 
 ## Notes
