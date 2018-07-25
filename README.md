@@ -1,11 +1,12 @@
 # dockercylc
 
-This image is a fast and easy way to run cylc suites on windows.
+This image is a fast and easy way to run cylc suites on windows.  
+https://cloud.docker.com/swarm/alexanderpaulsell/repository/docker/alexanderpaulsell/cylc
 
 ## Environment Variables
 
 | Environment variable | Description |
-| -------------------- | -----------------------------------------------------------------------------|
+| ----------------------- | ----------------------------------------------------------------------------- |
 | suitename | On runtime the container will register /dockercylc/${suitename} and run cylc gui for it |
 | coldstart | If set to 1 will coldstart suite on runtime |
 | warmstart | If set to 1 will warmstart suite on runtime |
@@ -28,6 +29,17 @@ Where PATH is the absolute path to the folder containing a suite.rc file
 Go to localhost:5800 on any web browser. You'll see a cylc gui. Run the suite.
 
 
+## Packages
+
+The simplest way to get specific packages for your suite is to make a new image, inherit alexanderpaulsell/cylc, then install packages.
+pip is already installed otherwise use alpines package manager.  
+
+###### Example
+
+FROM alexanderpaulsell/cylc  
+RUN pip install BeautifulSoup
+
+
 ## Notes
 
 A different volume can be in your suite definition volume: -v PATH_TO_SUITE_DEF:/dockercylc/suitename/ -v PATH_TO_SOMEWHERE_ELSE:/dockercylc/suitename/data/
@@ -37,8 +49,6 @@ This may create empty folders in PATH_TO_SUITE_DEF
 Setting a volume to cylc-run is dangerous; if the container is shut down unexpectedly without first stopping the suite you cannot restart the suite.
 
 Because the container is linux, if your files were writen in dos you may need to run dos2unix.  
-
-The Alpine filesystem will put python in /usr/bin which may interfere with some shebang lines.
 
 ## Credit
 
