@@ -38,8 +38,6 @@ Setting a volume to cylc-run is dangerous; if the container is shut down unexpec
 
 Because the container is linux, if your files were writen in dos you may need to run dos2unix.  
 
-The Alpine filesystem will put python in /usr/bin which may interfere with some shebang lines.
-
 ## Credit
 
 Credit to jlesage for making the suite gui easily visible.
