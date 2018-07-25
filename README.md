@@ -1,6 +1,7 @@
 # dockercylc
 
-This image is a fast and easy way to run cylc suites on windows.  
+The alpine version is just an alpine container with cylc installed.  
+The gui version provides an easy and fast way to get your cylc app up and running with a gui.
 https://cloud.docker.com/swarm/alexanderpaulsell/repository/docker/alexanderpaulsell/cylc
 
 ## Environment Variables
